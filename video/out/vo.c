@@ -574,6 +574,9 @@ static bool render_frame(struct vo *vo)
         in->hasframe_rendered = true;
         pthread_mutex_unlock(&in->lock);
 
+        MP_STATS(vo, "event-timed %lld pts", (long long)pts);
+        MP_STATS(vo, "event-timed %lld endpts", (long long)end_time);
+
         MP_STATS(vo, "start video");
 
         vo->driver->draw_image(vo, img);
@@ -585,6 +588,8 @@ static bool render_frame(struct vo *vo)
                 break;
             mp_sleep_us(target - now);
         }
+
+        MP_STATS(vo, "rendering");
 
         if (vo->driver->flip_page_timed)
             vo->driver->flip_page_timed(vo, pts, duration);
