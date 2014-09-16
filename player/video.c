@@ -525,7 +525,9 @@ static int video_output_image(struct MPContext *mpctx, double endpts)
 
     // Get a new frame if we need one.
     if (!mpctx->next_frame[1]) {
+        MP_STATS(mpctx, "start filter");
         struct mp_image *img = vf_read_output_frame(mpctx->d_video->vfilter);
+        MP_STATS(mpctx, "end filter");
         if (img) {
             // Always add these; they make backstepping after seeking faster.
             add_frame_pts(mpctx, img->pts);
