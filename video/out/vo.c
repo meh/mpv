@@ -567,15 +567,16 @@ static bool render_frame(struct vo *vo)
     // instead of just freezing the display forever.
     in->dropped_frame &= mp_time_us() - in->last_flip < 100 * 1000;
 
+    MP_STATS(vo, "event-timed %lld pts", (long long)pts);
+    MP_STATS(vo, "event-timed %lld endpts", (long long)end_time);
+
     if (in->dropped_frame) {
         in->drop_count += 1;
         in->dropped_image = img;
+        MP_STATS(vo, "drop");
     } else {
         in->hasframe_rendered = true;
         pthread_mutex_unlock(&in->lock);
-
-        MP_STATS(vo, "event-timed %lld pts", (long long)pts);
-        MP_STATS(vo, "event-timed %lld endpts", (long long)end_time);
 
         MP_STATS(vo, "start video");
 
