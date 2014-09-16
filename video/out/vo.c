@@ -576,6 +576,7 @@ static bool render_frame(struct vo *vo)
         MP_STATS(vo, "drop");
     } else {
         in->hasframe_rendered = true;
+        mp_input_wakeup(vo->input_ctx); // core can already queue new video
         pthread_mutex_unlock(&in->lock);
 
         MP_STATS(vo, "start video");
