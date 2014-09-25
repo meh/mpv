@@ -1221,10 +1221,19 @@ function osc_init()
     ne = new_element("cache", "button")
 
     ne.content = function (ass)
-        local cache = mp.get_property_number("cache")
-        if not (cache == nil) and (cache < 45) then
-            ass:append("Cache: " .. (math.floor(cache)) .."%")
+        local dmx_cache = mp.get_property_number("demuxer-cache-duration")
+        if (dmx_cache == nil) then
+            dmx_cache = ""
+        else
+            dmx_cache = math.floor(dmx_cache + 0.5) .. "s + "
         end
+        local cache_used = mp.get_property_number("cache-used")
+        if (cache_used < 1024) then
+            cache_used = cache_used .. " KB"
+        else
+            cache_used = math.floor((cache_used/102.4)+0.5)/10 .. " MB"
+        end
+        ass:append("Cache: "   .. dmx_cache .. cache_used )
     end
 
 
