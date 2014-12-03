@@ -1426,6 +1426,24 @@ void mpv_set_wakeup_callback(mpv_handle *ctx, void (*cb)(void *d), void *d);
  */
 int mpv_get_wakeup_pipe(mpv_handle *ctx);
 
+typedef struct mpv_opengl_cb_context mpv_opengl_cb_context;
+typedef void (*mpv_opengl_cb_update_fn)(void *cb_ctx);
+typedef void *(*mpv_opengl_cb_get_proc_address_fn)(void *fn_ctx, const char *name);
+
+mpv_opengl_cb_context *mpv_opengl_cb_get_context(mpv_handle *ctx);
+
+void mpv_opengl_cb_set_update_callback(mpv_opengl_cb_context *ctx,
+                                       mpv_opengl_cb_update_fn callback,
+                                       void *callback_ctx);
+
+int mpv_opengl_cb_init_gl(mpv_opengl_cb_context *ctx, const char *exts,
+                          mpv_opengl_cb_get_proc_address_fn get_proc_address,
+                          void *get_proc_address_ctx);
+
+int mpv_opengl_cb_render(mpv_opengl_cb_context *ctx, int fbo, int vp[4]);
+
+int mpv_opengl_cb_uninit_gl(mpv_opengl_cb_context *ctx);
+
 #ifdef __cplusplus
 }
 #endif

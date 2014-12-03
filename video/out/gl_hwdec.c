@@ -35,14 +35,14 @@ extern const struct gl_hwdec_driver gl_hwdec_vda;
 extern const struct gl_hwdec_driver gl_hwdec_vdpau;
 
 static const struct gl_hwdec_driver *const mpgl_hwdec_drivers[] = {
+#if HAVE_VDPAU_GL_X11
+    &gl_hwdec_vdpau,
+#endif
 #if HAVE_VAAPI_GLX
     &gl_hwdec_vaglx,
 #endif
 #if HAVE_VDA_GL
     &gl_hwdec_vda,
-#endif
-#if HAVE_VDPAU_GL_X11
-    &gl_hwdec_vdpau,
 #endif
     NULL
 };
@@ -71,9 +71,10 @@ struct gl_hwdec *gl_hwdec_load_api(struct mp_log *log, GL *gl,
                                    const char *api_name,
                                    struct mp_hwdec_info *info)
 {
+    bool is_auto = api_name && strcmp(api_name, "auto") == 0;
     for (int n = 0; mpgl_hwdec_drivers[n]; n++) {
         const struct gl_hwdec_driver *drv = mpgl_hwdec_drivers[n];
-        if (api_name && strcmp(drv->api_name, api_name) == 0) {
+        if (is_auto || (api_name && strcmp(drv->api_name, api_name) == 0)) {
             struct gl_hwdec *r = load_hwdec_driver(log, gl, drv, info);
             if (r)
                 return r;

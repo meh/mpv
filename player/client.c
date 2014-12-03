@@ -1567,3 +1567,17 @@ int64_t mpv_get_time_us(mpv_handle *ctx)
 {
     return mp_time_us();
 }
+
+mpv_opengl_cb_context *mpv_opengl_cb_get_context(mpv_handle *ctx)
+{
+    if (!ctx->mpctx->initialized)
+        return NULL;
+    lock_core(ctx);
+    mpv_opengl_cb_context *cb = ctx->mpctx->gl_cb_ctx;
+    if (!cb) {
+        cb = mp_opengl_create(ctx->mpctx->global, ctx->mpctx->osd);
+        ctx->mpctx->gl_cb_ctx = cb;
+    }
+    unlock_core(ctx);
+    return cb;
+}
