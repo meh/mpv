@@ -330,10 +330,13 @@ void main() {
 #define USE_LINEAR_INTERPOLATION 0
 #endif
 #if USE_LINEAR_INTERPOLATION == 1
-    vec4 acolor = mix(texture(texture0, chr_texcoord),
-                      // vec4(1.0, 0.0, 0.0, 1.0),
-                      texture(texture1, chr_texcoord),
-                      inter_coeff);
+    vec4 acolor = vec4(255.0, 0.0, 0.0, 255.0);
+    // vec4 acolor = mix(
+    //     // texture(texture0, chr_texcoord),
+    //     // texture(texture1, chr_texcoord),
+    //     vec4(255.0, 0.0, 0.0, 255.0),
+    //     vec4(255.0, 0.0, 0.0, 255.0),
+    //     0.6);
 #elif USE_CONV == CONV_PLANAR
     vec4 acolor = vec4(SAMPLE_L(texture0, textures_size[0], texcoord).r,
                        SAMPLE_C(texture1, textures_size[1], chr_texcoord).r,
