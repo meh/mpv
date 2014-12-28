@@ -65,6 +65,7 @@ extern const struct vo_driver video_out_direct3d_shaders;
 extern const struct vo_driver video_out_sdl;
 extern const struct vo_driver video_out_vaapi;
 extern const struct vo_driver video_out_wayland;
+extern const struct vo_driver video_out_rpi;
 
 const struct vo_driver *const video_out_drivers[] =
 {
@@ -108,6 +109,9 @@ const struct vo_driver *const video_out_drivers[] =
 #endif
 #if HAVE_WAYLAND
         &video_out_wayland,
+#endif
+#if HAVE_RPI
+        &video_out_rpi,
 #endif
         NULL
 };

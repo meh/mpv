@@ -43,6 +43,7 @@
 #include "video/decode/dec_video.h"
 
 extern const vd_functions_t mpcodecs_vd_ffmpeg;
+extern const vd_functions_t vd_rpi;
 
 /* Please do not add any new decoders here. If you want to implement a new
  * decoder, add it to libavcodec, except for wrappers around external
@@ -50,6 +51,11 @@ extern const vd_functions_t mpcodecs_vd_ffmpeg;
 
 const vd_functions_t * const mpcodecs_vd_drivers[] = {
     &mpcodecs_vd_ffmpeg,
+
+#if HAVE_RPI
+    &vd_rpi,
+#endif
+
     /* Please do not add any new decoders here. If you want to implement a new
      * decoder, add it to libavcodec, except for wrappers around external
      * libraries and decoders requiring binary support. */

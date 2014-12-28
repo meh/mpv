@@ -769,6 +769,11 @@ standalone_features = [
         'desc': 'Apple Remote support',
         'deps': [ 'cocoa' ],
         'func': check_true
+    }, {
+        'name': '--rpi',
+        'desc': 'Raspberry Pi support',
+        'deps_neg': ['wayland'],
+        'func': check_pkg_config('bcm_host'),
     }
 ]
 
