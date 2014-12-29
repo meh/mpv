@@ -395,6 +395,7 @@ def build(ctx):
         ( "osdep/w32_keyboard.c",                "os-win32" ),
         ( "osdep/w32_keyboard.c",                "os-cygwin" ),
         ( "osdep/mpv.rc",                        "win32-executable" ),
+        ( "osdep/omx.c",                         "rpi" ),
 
         ## tree_allocator
         "ta/ta.c", "ta/ta_talloc.c", "ta/ta_utils.c"
