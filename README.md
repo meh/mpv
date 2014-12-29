@@ -72,9 +72,6 @@ If you are running Mac OSX and using homebrew we provide [homebrew-mpv][homebrew
 to date formula that compiles mpv with sensible dependencies and defaults for
 OSX.
 
-If you're running on a Raspberry Pi you'll need to install
-[rpi-pkgconfig][rpi-pkconfig] for the build system to pick up support for it.
-
 FFmpeg vs. Libav
 ----------------
 

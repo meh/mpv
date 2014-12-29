@@ -575,3 +575,11 @@ def build(ctx):
             ctx.install_as(
                 ctx.env.DATADIR + '/icons/hicolor/' + size + '/apps/mpv.png',
                 'etc/mpv-icon-8bit-' + size + '.png')
+
+    if ctx.dependency_satisfied('rpi'):
+        ctx.env.CFLAGS += ["-DUSE_VCHIQ_ARM",
+                           "-I/opt/vc/include",
+                           "-I/opt/vc/include/interface/vmcs_host/linux",
+                           "-I/opt/vc/include/interface/vcos/pthreads"]
+
+        ctx.env.LDFLAGS += ["-L/opt/vc/lib", "-lopenmaxil"]

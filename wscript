@@ -719,6 +719,11 @@ hwaccel_features = [
         'desc': 'libavcodec DXVA2 hwaccel',
         'deps': [ 'gdi' ],
         'func': check_true,
+    }, {
+        'name': '--rpi',
+        'desc': 'Raspberry Pi support',
+        'deps_neg': ['wayland'],
+        'func': check_headers('/opt/vc/include/IL/OMX_Core.h'),
     }
 ]
 
@@ -769,11 +774,6 @@ standalone_features = [
         'desc': 'Apple Remote support',
         'deps': [ 'cocoa' ],
         'func': check_true
-    }, {
-        'name': '--rpi',
-        'desc': 'Raspberry Pi support',
-        'deps_neg': ['wayland'],
-        'func': check_pkg_config('bcm_host'),
     }
 ]
 
