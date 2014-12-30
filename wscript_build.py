@@ -583,4 +583,4 @@ def build(ctx):
                            "-I/opt/vc/include/interface/vmcs_host/linux",
                            "-I/opt/vc/include/interface/vcos/pthreads"]
 
-        ctx.env.LDFLAGS += ["-L/opt/vc/lib", "-lopenmaxil"]
+        ctx.env.LAST_LINKFLAGS += ["-L/opt/vc/lib", "-lopenmaxil"]

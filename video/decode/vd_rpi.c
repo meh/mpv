@@ -30,6 +30,7 @@
 #include "misc/bstr.h"
 #include "common/av_common.h"
 #include "common/codecs.h"
+#include "osdep/omx.h"
 
 #include "video/fmt-conversion.h"
 
@@ -40,8 +41,6 @@
 #include "demux/stheader.h"
 #include "demux/packet.h"
 #include "video/csputils.h"
-
-#include "IL/OMX_Video.h"
 
 static OMX_VIDEO_CODINGTYPE mp_codec_to_omx_codec(const char* name)
 {
@@ -201,13 +200,83 @@ static void add_decoders(struct mp_decoder_list *list)
     mp_add_decoder_from_omx_codec_id(list, OMX_VIDEO_CodingMVC);
 }
 
+typedef struct vd_rpi_ctx {
+    OMX_HANDLETYPE handle;
+    OMX_CALLBACKTYPE callbacks;
+    OMX_U32 port;
+} vd_rpi_ctx;
+
+static OMX_ERRORTYPE event_handler(OMX_HANDLETYPE component, OMX_PTR app_data,
+                                   OMX_EVENTTYPE event, OMX_U32 data1,
+                                   OMX_U32 data2, OMX_PTR event_data)
+{
+    return OMX_ErrorNone;
+}
+
+static OMX_ERRORTYPE empty_buffer_done(OMX_HANDLETYPE component,
+                                       OMX_PTR app_data,
+                                       OMX_BUFFERHEADERTYPE* buffer)
+{
+    return OMX_ErrorNone;
+}
+
+static OMX_ERRORTYPE fill_buffer_done(OMX_HANDLETYPE component,
+                                      OMX_PTR app_data,
+                                      OMX_BUFFERHEADERTYPE* buffer)
+{
+    return OMX_ErrorNone;
+}
+
 static int init(struct dec_video *vd, const char *decoder)
 {
+    if (mp_omx_init() != OMX_ErrorNone) {
+        return 1;
+    }
+
+    vd_rpi_ctx *ctx;
+    ctx = vd->priv = talloc_zero(NULL, vd_rpi_ctx);
+
+    ctx->callbacks.EventHandler = event_handler;
+    ctx->callbacks.EmptyBufferDone = empty_buffer_done;
+    ctx->callbacks.FillBufferDone = fill_buffer_done;
+
+    if (OMX_GetHandle(&ctx->handle, "OMX.broadcom.video_decode", vd,
+                      &ctx->callbacks) != OMX_ErrorNone)
+    {
+        return 1;
+    }
+
+    {
+        OMX_PORT_PARAM_TYPE param;
+        OMX_INIT_STRUCTURE(&param);
+
+        if (OMX_GetParameter(ctx->handle, OMX_IndexParamVideoInit,
+                             &param) != OMX_ErrorNone)
+        {
+            return 1;
+        }
+
+        ctx->port = param.nStartPortNumber;
+    }
+
+    OMX_SendCommand(ctx->handle, OMX_CommandStateSet, OMX_StateIdle, 0);
+
+    {
+        OMX_VIDEO_PARAM_PORTFORMATTYPE param;
+        OMX_INIT_STRUCTURE(&param);
+
+        param.nPortIndex = ctx->port;
+        param.eCompressionFormat = mp_codec_to_omx_codec(decoder);
+
+        OMX_SetParameter(ctx->handle, OMX_IndexParamVideoPortFormat, &param);
+    }
+
     return 0;
 }
 
 static void uninit(struct dec_video *vd)
 {
+    mp_omx_uninit();
 }
 
 static int control(struct dec_video *vd, int cmd, void *arg)
