@@ -17,3 +17,43 @@
  */
 
 #include "omx.h"
+#include <stdbool.h>
+
+// we need to do reference counting for init and uninit because it has to be called
+// just once to initialize and deinitialize the OMX framework.
+//
+// NOTE: no need for atomics since ad, vd and vo init/uninit are single-threaded.
+static int _references = 0;
+
+OMX_ERRORTYPE mp_omx_init(void)
+{
+    static OMX_ERRORTYPE result = OMX_ErrorMax;
+
+    if (result != OMX_ErrorNone) {
+        result = OMX_Init();
+    }
+
+    if (result == OMX_ErrorNone) {
+        _references++;
+    }
+
+    return result;
+}
+
+OMX_ERRORTYPE mp_omx_uninit(void)
+{
+    static OMX_ERRORTYPE result = OMX_ErrorNone;
+
+    if (_references == 1) {
+        result = OMX_Deinit();
+
+        if (result == OMX_ErrorNone) {
+            _references--;
+        }
+    }
+    else {
+        _references--;
+    }
+
+    return result;
+}

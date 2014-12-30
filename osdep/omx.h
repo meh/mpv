@@ -19,4 +19,20 @@
 #ifndef MP_OMX_H
 #define MP_OMX_H
 
+#include <IL/OMX_Core.h>
+#include <IL/OMX_Component.h>
+#include <IL/OMX_Audio.h>
+#include <IL/OMX_Video.h>
+
+OMX_ERRORTYPE mp_omx_init(void);
+OMX_ERRORTYPE mp_omx_uninit(void);
+
+#define OMX_INIT_STRUCTURE(a) \
+  memset((a), 0, sizeof(*a)); \
+  (a)->nSize = sizeof(*a); \
+  (a)->nVersion.s.nVersionMajor = OMX_VERSION_MAJOR; \
+  (a)->nVersion.s.nVersionMinor = OMX_VERSION_MINOR; \
+  (a)->nVersion.s.nRevision = OMX_VERSION_REVISION; \
+  (a)->nVersion.s.nStep = OMX_VERSION_STEP
+
 #endif
